@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  View,
   TextInput,
   StyleSheet,
   TouchableOpacity,
@@ -12,6 +11,7 @@ import {
 import { Link, useRouter } from "expo-router";
 import { useSignIn } from "@clerk/clerk-expo";
 import { Colors, Spacing, FontSize } from "@/constants/theme";
+import { useLocalization } from "@/localization";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -19,14 +19,15 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { isLoaded, signIn, setActive } = useSignIn();
+  const { t } = useLocalization();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Please enter email and password");
+      Alert.alert(t("alerts.error"), t("alerts.pleaseEnterEmailPassword"));
       return;
     }
     if (!isLoaded) {
-      Alert.alert("Please wait", "Authentication is still loading");
+      Alert.alert(t("alerts.pleaseWait"), t("alerts.authLoading"));
       return;
     }
 
@@ -39,8 +40,8 @@ export default function LoginScreen() {
 
       if (result.status !== "complete") {
         Alert.alert(
-          "More steps required",
-          "Please complete the remaining sign-in steps in Clerk dashboard configuration.",
+          t("alerts.moreStepsRequired"),
+          t("alerts.completeSignInSteps"),
         );
         return;
       }
@@ -49,8 +50,8 @@ export default function LoginScreen() {
       router.replace("/(main)");
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Please try again";
-      Alert.alert("Login failed", message);
+        error instanceof Error ? error.message : t("alerts.pleaseTryAgain");
+      Alert.alert(t("alerts.loginFailed"), message);
     } finally {
       setLoading(false);
     }
@@ -61,12 +62,12 @@ export default function LoginScreen() {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Text style={styles.title}>Welcome back</Text>
-      <Text style={styles.subtitle}>Sign in to continue</Text>
+      <Text style={styles.title}>{t("auth.welcomeBack")}</Text>
+      <Text style={styles.subtitle}>{t("auth.signInContinue")}</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder={t("auth.email")}
         placeholderTextColor={Colors.dark.textMuted}
         value={email}
         onChangeText={setEmail}
@@ -76,7 +77,7 @@ export default function LoginScreen() {
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder={t("auth.password")}
         placeholderTextColor={Colors.dark.textMuted}
         value={password}
         onChangeText={setPassword}
@@ -90,13 +91,13 @@ export default function LoginScreen() {
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? "Signing in…" : "Sign in"}
+          {loading ? t("auth.signingIn") : t("auth.signIn")}
         </Text>
       </TouchableOpacity>
 
       <Link href="/signup" asChild>
         <TouchableOpacity style={styles.link}>
-          <Text style={styles.linkText}>Dont have an account? Sign up</Text>
+          <Text style={styles.linkText}>{t("auth.noAccountSignUp")}</Text>
         </TouchableOpacity>
       </Link>
     </KeyboardAvoidingView>

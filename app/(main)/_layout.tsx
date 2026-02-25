@@ -1,13 +1,10 @@
-import { Stack, Redirect, useRouter } from "expo-router";
-import { ActivityIndicator, View, TouchableOpacity } from "react-native";
-import { useAuth, useUser } from "@clerk/clerk-expo";
+import { Stack, Redirect } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
+import { useAuth } from "@clerk/clerk-expo";
 import { Colors } from "@/constants/theme";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 
 export default function MainLayout() {
   const { isLoaded, isSignedIn } = useAuth();
-  const { user } = useUser();
-  const router = useRouter();
 
   if (!isLoaded) {
     return (

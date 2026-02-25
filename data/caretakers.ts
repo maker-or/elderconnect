@@ -5,8 +5,8 @@ export const CARETAKERS = [
 ];
 
 export const DURATIONS = [
-  { id: "day", label: "Day" },
-  { id: "week", label: "Week" },
-  { id: "month", label: "Month" },
-  { id: "custom", label: "Custom" },
+  { id: "day" },
+  { id: "week" },
+  { id: "month" },
+  { id: "custom" },
 ] as const;

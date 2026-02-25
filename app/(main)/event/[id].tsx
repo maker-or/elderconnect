@@ -10,20 +10,22 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { EVENTS } from "@/data/events";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import { useLocalization } from "@/localization";
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useLocalization();
 
   const event = EVENTS.find((e) => e.id === id);
 
   if (!event) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>Event not found</Text>
+        <Text style={styles.errorText}>{t("events.notFound")}</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Text style={styles.backButtonText}>Go Back</Text>
+          <Text style={styles.backButtonText}>{t("common.goBack")}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -31,9 +33,10 @@ export default function EventDetailScreen() {
 
   const openGoogleMaps = () => {
     // If we have a dummy mapUrl we can use it, or search for the location
-    const url = event.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`;
+    const location = t(event.locationKey);
+    const url = event.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
     Linking.openURL(url).catch((err) =>
-      console.error("Couldn't open Google Maps", err)
+      console.error(t("alerts.openMapsError"), err)
     );
   };
 
@@ -53,13 +56,13 @@ export default function EventDetailScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Top Title Card */}
         <View style={styles.titleCard}>
-          <Text style={styles.cardTitle}>{event.title}</Text>
+          <Text style={styles.cardTitle}>{t(event.titleKey)}</Text>
         </View>
 
         {/* Location & Time Card */}
         <TouchableOpacity style={styles.locationCard} onPress={openGoogleMaps} activeOpacity={0.9}>
           <View style={styles.locationInfo}>
-            <Text style={styles.locationTitle}>{event.location}</Text>
+            <Text style={styles.locationTitle}>{t(event.locationKey)}</Text>
             <Text style={styles.locationTime}>{event.time}</Text>
           </View>
           <Feather name="arrow-up-right" size={36} color="#FDEAE5" style={styles.iconOpacity} />
@@ -67,14 +70,14 @@ export default function EventDetailScreen() {
 
         {/* Description Section */}
         <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionText}>{event.description}</Text>
+          <Text style={styles.descriptionText}>{t(event.descriptionKey)}</Text>
         </View>
       </ScrollView>
 
       {/* Enquiry Button */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
         <TouchableOpacity style={styles.enquiryButton} activeOpacity={0.9}>
-          <Text style={styles.enquiryButtonText}>enquiry</Text>
+          <Text style={styles.enquiryButtonText}>{t("events.enquiry")}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

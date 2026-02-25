@@ -2,15 +2,16 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Colors } from "@/constants/theme";
+import { useLocalization } from "@/localization";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { t } = useLocalization();
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Services</Text>
+        <Text style={styles.headerTitle}>{t("home.services")}</Text>
         <TouchableOpacity onPress={() => router.push("/profile")} activeOpacity={0.8}>
           <View style={styles.profilePic} />
         </TouchableOpacity>
@@ -30,7 +31,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.cardFooter}>
-            <Text style={styles.cardTitle}>Event</Text>
+            <Text style={styles.cardTitle}>{t("home.event")}</Text>
           </View>
         </TouchableOpacity>
 
@@ -46,7 +47,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.cardFooter}>
-            <Text style={styles.cardTitle}>Nurse</Text>
+            <Text style={styles.cardTitle}>{t("home.nurse")}</Text>
           </View>
         </TouchableOpacity>
 
@@ -60,7 +61,7 @@ export default function HomeScreen() {
             <View style={[styles.iconCircle, { backgroundColor: "#E6FBBF" }]} />
           </View>
           <View style={styles.cardFooter}>
-            <Text style={styles.cardTitle}>Activate</Text>
+            <Text style={styles.cardTitle}>{t("home.activate")}</Text>
           </View>
         </TouchableOpacity>
 
@@ -76,7 +77,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.cardFooter}>
-            <Text style={styles.cardTitle}>Reminder</Text>
+            <Text style={styles.cardTitle}>{t("home.reminder")}</Text>
           </View>
         </TouchableOpacity>
 
@@ -92,7 +93,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.cardFooter}>
-            <Text style={[styles.cardTitle, { color: "#5B3C09" }]}>Lighting</Text>
+            <Text style={[styles.cardTitle, { color: "#5B3C09" }]}>{t("home.lighting")}</Text>
           </View>
         </TouchableOpacity>
 

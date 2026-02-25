@@ -5,6 +5,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import { tokenCache } from "../lib/clerk";
+import { LocalizationProvider } from "@/localization";
 
 export const unstable_settings = {
   initialRouteName: "index",
@@ -28,16 +29,18 @@ export default function RootLayout() {
   }
 
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <ThemeProvider value={DarkNavTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="login" />
-          <Stack.Screen name="signup" />
-          <Stack.Screen name="(main)" />
-        </Stack>
-        <StatusBar style="light" />
-      </ThemeProvider>
-    </ClerkProvider>
+    <LocalizationProvider>
+      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+        <ThemeProvider value={DarkNavTheme}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="login" />
+            <Stack.Screen name="signup" />
+            <Stack.Screen name="(main)" />
+          </Stack>
+          <StatusBar style="light" />
+        </ThemeProvider>
+      </ClerkProvider>
+    </LocalizationProvider>
   );
 }

@@ -11,15 +11,16 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as IntentLauncher from "expo-intent-launcher";
 import * as Calendar from "expo-calendar";
 import Constants from "expo-constants";
+import { useLocalization } from "@/localization";
 
-type TimeOfDay = "Morning" | "Afternoon" | "Evening" | "Night";
+type TimeOfDay = "morning" | "afternoon" | "evening" | "night";
 
 interface Reminder {
   id: string;
@@ -29,14 +30,14 @@ interface Reminder {
 }
 
 const INITIAL_REMINDERS: Reminder[] = [
-  { id: "1", title: "sugar tablet", timeOfDay: "Morning", time: "6:00" },
-  { id: "2", title: "BP tablet", timeOfDay: "Afternoon", time: "3:00" },
-  { id: "3", title: "vitamins", timeOfDay: "Night", time: "8:00" },
+  { id: "1", title: "sugar tablet", timeOfDay: "morning", time: "6:00" },
+  { id: "2", title: "BP tablet", timeOfDay: "afternoon", time: "3:00" },
+  { id: "3", title: "vitamins", timeOfDay: "night", time: "8:00" },
 ];
 
 export default function RemindersScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const { t, locale } = useLocalization();
   
   const [reminders, setReminders] = useState<Reminder[]>(INITIAL_REMINDERS);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -46,7 +47,7 @@ export default function RemindersScreen() {
   const [newTitle, setNewTitle] = useState("");
   const [newTime, setNewTime] = useState<Date>(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [newTimeOfDay, setNewTimeOfDay] = useState<TimeOfDay>("Morning");
+  const [newTimeOfDay, setNewTimeOfDay] = useState<TimeOfDay>("morning");
   const isExpoGo = Constants.appOwnership === "expo";
 
   useEffect(() => {
@@ -70,8 +71,8 @@ export default function RemindersScreen() {
           // Expo Go cannot declare SET_ALARM; open Clock app as fallback.
           await IntentLauncher.startActivityAsync("android.intent.action.SHOW_ALARMS");
           Alert.alert(
-            "Alarm integration needs dev build",
-            "You're running in Expo Go, which blocks direct alarm creation. Opened your Clock app instead. Use a development build to create alarms automatically."
+            t("alerts.alarmNeedsDevBuild"),
+            t("alerts.expoGoAlarmFallback")
           );
           return;
         }
@@ -97,22 +98,22 @@ export default function RemindersScreen() {
             }
             
             await Calendar.createEventAsync(defaultCalendar.id, {
-              title: `Reminder: ${title}`,
+              title: t("reminders.reminderPrefix", { title }),
               startDate: startDate,
               endDate: new Date(startDate.getTime() + 15 * 60000), // 15 mins later
               alarms: [{ relativeOffset: 0 }],
             });
-            Alert.alert("Success", "Reminder added to your Calendar!");
+            Alert.alert(t("alerts.reminderSuccess"), t("alerts.reminderAddedToCalendar"));
           }
         } else {
-          Alert.alert("Permission required", "Calendar access is needed to set reminders on iOS.");
+          Alert.alert(t("alerts.permissionRequired"), t("alerts.calendarPermissionNeeded"));
         }
       }
     } catch (e) {
       console.error("Error creating system alarm:", e);
       Alert.alert(
-        "Couldn't create alarm",
-        "Please try again, or open your Clock app and add it manually."
+        t("alerts.couldntCreateAlarm"),
+        t("alerts.addAlarmManually")
       );
     }
   };
@@ -120,7 +121,7 @@ export default function RemindersScreen() {
   const handleAddReminder = async () => {
     if (!newTitle.trim()) return;
 
-    const timeString = newTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const timeString = newTime.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
 
     const newReminder: Reminder = {
       id: Date.now().toString(),
@@ -138,7 +139,7 @@ export default function RemindersScreen() {
     setIsModalVisible(false);
     setNewTitle("");
     setNewTime(new Date());
-    setNewTimeOfDay("Morning");
+    setNewTimeOfDay("morning");
     setIsDropdownOpen(false);
     setShowTimePicker(false);
   };
@@ -167,7 +168,7 @@ export default function RemindersScreen() {
           style={styles.addButton}
           activeOpacity={0.8}
         >
-          <Text style={styles.addButtonText}>+ Add</Text>
+          <Text style={styles.addButtonText}>{t("reminders.add")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -178,7 +179,7 @@ export default function RemindersScreen() {
             <Text style={styles.cardTitle}>{reminder.title}</Text>
             
             <View style={styles.cardFooter}>
-              <Text style={styles.timeOfDayText}>{reminder.timeOfDay}</Text>
+              <Text style={styles.timeOfDayText}>{t(`reminders.${reminder.timeOfDay}`)}</Text>
               <View style={styles.timeContainer}>
                 <Feather name="bell" size={20} color="#E6CCFF" style={{ opacity: 0.9 }} />
                 <Text style={styles.timeText}>{reminder.time}</Text>
@@ -201,14 +202,14 @@ export default function RemindersScreen() {
         >
           <View style={styles.modalHeader}>
              <TouchableOpacity style={styles.cancelButton} onPress={handleCloseModal}>
-               <Text style={styles.cancelButtonText}>✕ cancel</Text>
+               <Text style={styles.cancelButtonText}>✕ {t("reminders.cancelLabel")}</Text>
              </TouchableOpacity>
           </View>
           
           <View style={styles.modalContent}>
             
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Title</Text>
+              <Text style={styles.inputLabel}>{t("reminders.titleLabel")}</Text>
               <TextInput
                 style={styles.textInput}
                 value={newTitle}
@@ -219,7 +220,7 @@ export default function RemindersScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Time</Text>
+              <Text style={styles.inputLabel}>{t("reminders.timeLabel")}</Text>
               {Platform.OS === 'ios' ? (
                 <View style={styles.timePickerContainerIOS}>
                   <DateTimePicker
@@ -238,7 +239,7 @@ export default function RemindersScreen() {
                     activeOpacity={0.9}
                   >
                     <Text style={styles.timeButtonText}>
-                      {newTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {newTime.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                     </Text>
                   </TouchableOpacity>
                   {showTimePicker && (
@@ -259,13 +260,13 @@ export default function RemindersScreen() {
                 activeOpacity={0.9}
                 onPress={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                <Text style={styles.dropdownButtonText}>{newTimeOfDay}</Text>
+                <Text style={styles.dropdownButtonText}>{t(`reminders.${newTimeOfDay}`)}</Text>
                 <Feather name="chevron-down" size={20} color="#661F85" />
               </TouchableOpacity>
               
               {isDropdownOpen && (
                 <View style={styles.dropdownList}>
-                  {(["Morning", "Afternoon", "Evening", "Night"] as TimeOfDay[]).map((option) => (
+                  {(["morning", "afternoon", "evening", "night"] as TimeOfDay[]).map((option) => (
                     <TouchableOpacity
                       key={option}
                       style={styles.dropdownItem}
@@ -274,7 +275,7 @@ export default function RemindersScreen() {
                         setIsDropdownOpen(false);
                       }}
                     >
-                      <Text style={styles.dropdownItemText}>{option}</Text>
+                      <Text style={styles.dropdownItemText}>{t(`reminders.${option}`)}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -288,7 +289,7 @@ export default function RemindersScreen() {
               activeOpacity={0.9}
               onPress={handleAddReminder}
             >
-              <Text style={styles.createButtonText}>Create</Text>
+              <Text style={styles.createButtonText}>{t("common.create")}</Text>
             </TouchableOpacity>
 
           </View>

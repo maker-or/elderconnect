@@ -1,13 +1,15 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { useClerk, useUser } from "@clerk/clerk-expo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from '@expo/vector-icons';
+import { SUPPORTED_LANGUAGES, useLocalization } from "@/localization";
 
 export default function ProfileScreen() {
   const { user } = useUser();
   const clerk = useClerk();
   const router = useRouter();
+  const { locale, setLocale, t } = useLocalization();
 
   const handleSignOut = async () => {
     await clerk.signOut();
@@ -24,25 +26,54 @@ export default function ProfileScreen() {
         >
           <Feather name="chevron-left" size={32} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
+        <Text style={styles.headerTitle}>{t("common.profile")}</Text>
         <View style={{ width: 44 }} />
       </View>
 
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.avatarContainer}>
           <View style={styles.avatar} />
         </View>
-        <Text style={styles.title}>{user?.fullName ?? user?.firstName ?? "User"}</Text>
+        <Text style={styles.title}>{user?.fullName ?? user?.firstName ?? t("common.user")}</Text>
         <Text style={styles.email}>{user?.primaryEmailAddress?.emailAddress ?? ""}</Text>
+
+        <View style={styles.languageSection}>
+          <Text style={styles.languageTitle}>{t("common.language")}</Text>
+          <View style={styles.languageGrid}>
+            {SUPPORTED_LANGUAGES.map((language) => {
+              const isActive = locale === language.code;
+              return (
+                <TouchableOpacity
+                  key={language.code}
+                  style={[
+                    styles.languageButton,
+                    isActive ? styles.languageButtonActive : null,
+                  ]}
+                  onPress={() => void setLocale(language.code)}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      styles.languageText,
+                      isActive ? styles.languageTextActive : null,
+                    ]}
+                  >
+                    {language.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
 
         <TouchableOpacity
           style={styles.signOutButton}
           onPress={handleSignOut}
           activeOpacity={0.8}
         >
-          <Text style={styles.signOutText}>Sign out</Text>
+          <Text style={styles.signOutText}>{t("common.signOut")}</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -72,9 +103,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    flex: 1,
     paddingHorizontal: 24,
     paddingTop: 40,
+    paddingBottom: 32,
     alignItems: 'center',
   },
   avatarContainer: {
@@ -96,7 +127,42 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: 'rgba(255,255,255,0.6)',
-    marginBottom: 60,
+    marginBottom: 30,
+  },
+  languageSection: {
+    width: "100%",
+    marginBottom: 28,
+  },
+  languageTitle: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "500",
+    marginBottom: 12,
+  },
+  languageGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  languageButton: {
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.18)",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  languageButtonActive: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderColor: "rgba(255,255,255,0.35)",
+  },
+  languageText: {
+    color: "rgba(255,255,255,0.85)",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  languageTextActive: {
+    color: "white",
   },
   signOutButton: {
     width: '100%',

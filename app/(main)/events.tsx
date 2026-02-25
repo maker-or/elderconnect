@@ -9,9 +9,11 @@ import { EVENTS } from "@/data/events";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Feather } from '@expo/vector-icons';
+import { useLocalization } from "@/localization";
 
 export default function EventsScreen() {
   const router = useRouter();
+  const { t } = useLocalization();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -23,7 +25,7 @@ export default function EventsScreen() {
         >
           <Feather name="chevron-left" size={32} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Events</Text>
+        <Text style={styles.headerTitle}>{t("events.title")}</Text>
         <View style={{ width: 44 }} />
       </View>
       <FlatList
@@ -36,10 +38,10 @@ export default function EventsScreen() {
             onPress={() => router.push(`/event/${item.id}`)}
             activeOpacity={0.9}
           >
-            <Text style={styles.cardTitle}>{item.title}</Text>
+            <Text style={styles.cardTitle}>{t(item.titleKey)}</Text>
             <View style={styles.cardLocationContainer}>
               <Feather name="map" size={24} color="#FDEAE5" style={styles.iconOpacity} />
-              <Text style={styles.cardLocationText}>{item.location}</Text>
+              <Text style={styles.cardLocationText}>{t(item.locationKey)}</Text>
             </View>
           </TouchableOpacity>
         )}

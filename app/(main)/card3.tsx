@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { Spacing, FontSize } from "@/constants/theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Feather } from '@expo/vector-icons';
+import { useLocalization } from "@/localization";
 
 export default function Card3Screen() {
     const router = useRouter();
+    const { t } = useLocalization();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -17,18 +18,18 @@ export default function Card3Screen() {
                 >
                     <Feather name="chevron-left" size={32} color="white" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Activate</Text>
+                <Text style={styles.headerTitle}>{t("card3.title")}</Text>
                 <View style={{ width: 44 }} />
             </View>
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <TouchableOpacity style={styles.card} activeOpacity={0.9}>
-                    <Text style={styles.cardTitle}>Resource {"\n"}Item 1</Text>
+                    <Text style={styles.cardTitle}>{t("card3.resourceItem1")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.card} activeOpacity={0.9}>
-                    <Text style={styles.cardTitle}>Resource {"\n"}Item 2</Text>
+                    <Text style={styles.cardTitle}>{t("card3.resourceItem2")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.card} activeOpacity={0.9}>
-                    <Text style={styles.cardTitle}>Resource {"\n"}Item 3</Text>
+                    <Text style={styles.cardTitle}>{t("card3.resourceItem3")}</Text>
                 </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>

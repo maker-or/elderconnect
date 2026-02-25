@@ -9,15 +9,17 @@ import {
   Alert,
 } from "react-native";
 import { CARETAKERS, DURATIONS } from "@/data/caretakers";
-import { Colors, Spacing, FontSize } from "@/constants/theme";
+import { Spacing, FontSize } from "@/constants/theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Feather } from '@expo/vector-icons';
+import { useLocalization } from "@/localization";
 
 export default function CaretakersScreen() {
   const router = useRouter();
+  const { t } = useLocalization();
   const [bookingFor, setBookingFor] = useState<(typeof CARETAKERS)[0] | null>(null);
-  const [duration, setDuration] = useState<string | null>(null);
+  const [duration, setDuration] = useState<(typeof DURATIONS)[number]["id"] | null>(null);
 
   const handleBookNow = (caretaker: (typeof CARETAKERS)[0]) => {
     setBookingFor(caretaker);
@@ -26,11 +28,11 @@ export default function CaretakersScreen() {
 
   const handleConfirm = () => {
     if (!bookingFor || !duration) return;
-    const label = DURATIONS.find((d) => d.id === duration)?.label ?? duration;
+    const label = t(`durations.${duration}`);
     Alert.alert(
-      "Booked",
-      `${bookingFor.name} has been booked for ${label}.`,
-      [{ text: "OK", onPress: () => { setBookingFor(null); setDuration(null); } }]
+      t("alerts.booked"),
+      t("alerts.bookedFor", { name: bookingFor.name, duration: label }),
+      [{ text: t("common.ok"), onPress: () => { setBookingFor(null); setDuration(null); } }]
     );
   };
 
@@ -44,7 +46,7 @@ export default function CaretakersScreen() {
         >
           <Feather name="chevron-left" size={32} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nurse</Text>
+        <Text style={styles.headerTitle}>{t("caretakers.title")}</Text>
         <View style={{ width: 44 }} />
       </View>
       <FlatList
@@ -76,7 +78,7 @@ export default function CaretakersScreen() {
           <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
             {bookingFor && (
               <>
-                <Text style={styles.modalTitle}>Select duration</Text>
+                <Text style={styles.modalTitle}>{t("caretakers.selectDuration")}</Text>
                 <Text style={styles.modalSubtitle}>{bookingFor.name}</Text>
                 {DURATIONS.map((d) => (
                   <TouchableOpacity
@@ -93,7 +95,7 @@ export default function CaretakersScreen() {
                         duration === d.id && styles.durationTextSelected,
                       ]}
                     >
-                      {d.label}
+                      {t(`durations.${d.id}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -102,13 +104,13 @@ export default function CaretakersScreen() {
                   onPress={handleConfirm}
                   disabled={!duration}
                 >
-                  <Text style={styles.confirmButtonText}>Confirm</Text>
+                  <Text style={styles.confirmButtonText}>{t("common.confirm")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.cancelButton}
                   onPress={() => setBookingFor(null)}
                 >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                  <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
                 </TouchableOpacity>
               </>
             )}

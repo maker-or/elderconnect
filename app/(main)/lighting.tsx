@@ -12,13 +12,15 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { Gyroscope } from "expo-sensors";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { useLocalization } from "@/localization";
 
-const SHAKE_THRESHOLD = 9.5;
+const SHAKE_THRESHOLD = 7.5;
 const SHAKE_DEBOUNCE_MS = 1000;
 const SHAKE_PEAK_WINDOW_MS = 650;
 
 export default function LightingScreen() {
   const router = useRouter();
+  const { t } = useLocalization();
   const [isTorchOn, setIsTorchOn] = useState(false);
   const [isShakeEnabled, setIsShakeEnabled] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -38,13 +40,13 @@ export default function LightingScreen() {
     const granted = await requestPermissionIfNeeded();
     if (!granted) {
       Alert.alert(
-        "Camera permission required",
-        "Allow camera access so we can control the flashlight."
+        t("alerts.cameraPermissionRequired"),
+        t("alerts.allowCameraAccess")
       );
       return;
     }
     setIsTorchOn((prev) => !prev);
-  }, [requestPermissionIfNeeded]);
+  }, [requestPermissionIfNeeded, t]);
 
   useEffect(() => {
     Gyroscope.setUpdateInterval(160);
@@ -79,8 +81,8 @@ export default function LightingScreen() {
   }, [isShakeEnabled, toggleTorch]);
 
   const toggleLabel = useMemo(
-    () => (isShakeEnabled ? "Toggle to turn OFF" : "Toggle to turn ON"),
-    [isShakeEnabled]
+    () => (isShakeEnabled ? t("lighting.toggleOff") : t("lighting.toggleOn")),
+    [isShakeEnabled, t]
   );
 
   return (
@@ -99,7 +101,7 @@ export default function LightingScreen() {
         </View>
 
         <Text style={styles.instructions}>
-          Shake the mobile to turn off and on the flashlight
+          {t("lighting.instructions")}
         </Text>
 
         <Pressable

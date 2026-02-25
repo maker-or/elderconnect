@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  View,
   TextInput,
   StyleSheet,
   TouchableOpacity,
@@ -12,6 +11,7 @@ import {
 import { Link, useRouter } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Colors, Spacing, FontSize } from "@/constants/theme";
+import { useLocalization } from "@/localization";
 
 export default function SignUpScreen() {
   const [name, setName] = useState("");
@@ -20,19 +20,20 @@ export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { t } = useLocalization();
 
   const handleSignUp = async () => {
     if (!name || !email || !password) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert(t("alerts.error"), t("alerts.fillAllFields"));
       return;
     }
     if (password.length < 8) {
-      Alert.alert("Error", "Password must be at least 8 characters");
+      Alert.alert(t("alerts.error"), t("alerts.passwordMinEight"));
       return;
     }
 
     if (!isLoaded) {
-      Alert.alert("Please wait", "Authentication is still loading");
+      Alert.alert(t("alerts.pleaseWait"), t("alerts.authLoading"));
       return;
     }
 
@@ -45,15 +46,19 @@ export default function SignUpScreen() {
       });
 
       if (result.status !== "complete") {
-        Alert.alert("Verification required", "Please complete account verification based on your Clerk sign-up settings.");
+        Alert.alert(
+          t("alerts.verificationRequired"),
+          t("alerts.completeVerification")
+        );
         return;
       }
 
       await setActive({ session: result.createdSessionId });
       router.replace("/(main)");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Please try again";
-      Alert.alert("Sign up failed", message);
+      const message =
+        err instanceof Error ? err.message : t("alerts.pleaseTryAgain");
+      Alert.alert(t("alerts.signUpFailed"), message);
     } finally {
       setLoading(false);
     }
@@ -64,12 +69,12 @@ export default function SignUpScreen() {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Text style={styles.title}>Create account</Text>
-      <Text style={styles.subtitle}>Join ElderConnect</Text>
+      <Text style={styles.title}>{t("auth.createAccount")}</Text>
+      <Text style={styles.subtitle}>{t("auth.joinElderConnect")}</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Name"
+        placeholder={t("auth.name")}
         placeholderTextColor={Colors.dark.textMuted}
         value={name}
         onChangeText={setName}
@@ -77,7 +82,7 @@ export default function SignUpScreen() {
       />
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder={t("auth.email")}
         placeholderTextColor={Colors.dark.textMuted}
         value={email}
         onChangeText={setEmail}
@@ -87,7 +92,7 @@ export default function SignUpScreen() {
       />
       <TextInput
         style={styles.input}
-        placeholder="Password (min 8 chars)"
+        placeholder={t("auth.passwordMin")}
         placeholderTextColor={Colors.dark.textMuted}
         value={password}
         onChangeText={setPassword}
@@ -101,13 +106,13 @@ export default function SignUpScreen() {
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? "Creating…" : "Sign up"}
+          {loading ? t("auth.creating") : t("auth.signUp")}
         </Text>
       </TouchableOpacity>
 
       <Link href="/login" asChild>
         <TouchableOpacity style={styles.link}>
-          <Text style={styles.linkText}>Already have an account? Sign in</Text>
+          <Text style={styles.linkText}>{t("auth.alreadyAccountSignIn")}</Text>
         </TouchableOpacity>
       </Link>
     </KeyboardAvoidingView>
