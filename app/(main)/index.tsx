@@ -1,7 +1,13 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalization } from "@/localization";
 
 export default function HomeScreen() {
@@ -12,13 +18,19 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t("home.services")}</Text>
-        <TouchableOpacity onPress={() => router.push("/profile")} activeOpacity={0.8}>
+        <TouchableOpacity
+          onPress={() => router.push("/profile")}
+          activeOpacity={0.8}
+        >
           <View style={styles.profilePic} />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Card 1: Event */}
         <TouchableOpacity
           style={[styles.card, { backgroundColor: "#F65131" }]}
@@ -43,7 +55,11 @@ export default function HomeScreen() {
         >
           <View style={[styles.innerBox, { backgroundColor: "#1F5485" }]}>
             <View style={[styles.iconCircle, { backgroundColor: "#BBD9FC" }]}>
-              <MaterialCommunityIcons name="hand-heart-outline" size={36} color="#3183F6" />
+              <MaterialCommunityIcons
+                name="hand-heart-outline"
+                size={36}
+                color="#3183F6"
+              />
             </View>
           </View>
           <View style={styles.cardFooter}>
@@ -52,7 +68,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
 
         {/* Card 3: Activate */}
-        <TouchableOpacity
+        {/*<TouchableOpacity
           style={[styles.card, { backgroundColor: "#1F852B" }]}
           onPress={() => router.push("/card3")}
           activeOpacity={0.9}
@@ -63,7 +79,7 @@ export default function HomeScreen() {
           <View style={styles.cardFooter}>
             <Text style={styles.cardTitle}>{t("home.activate")}</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
 
         {/* Card 4: Reminder */}
         <TouchableOpacity
@@ -93,10 +109,11 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.cardFooter}>
-            <Text style={[styles.cardTitle, { color: "#5B3C09" }]}>{t("home.lighting")}</Text>
+            <Text style={[styles.cardTitle, { color: "#5B3C09" }]}>
+              {t("home.lighting")}
+            </Text>
           </View>
         </TouchableOpacity>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -105,27 +122,27 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090909',
+    backgroundColor: "#090909",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 16,
   },
   headerTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 32,
-    fontWeight: '300',
+    fontWeight: "300",
     letterSpacing: -0.5,
   },
   profilePic: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#d1d1d6',
+    backgroundColor: "#d1d1d6",
   },
   container: {
     flex: 1,
@@ -144,25 +161,25 @@ const styles = StyleSheet.create({
   innerBox: {
     flex: 1,
     borderRadius: 11,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   iconCircle: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   cardFooter: {
     height: 56,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 16,
   },
   cardTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 24,
-    fontWeight: '300',
+    fontWeight: "300",
     letterSpacing: -0.3,
   },
 });

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Linking,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { EVENTS } from "@/data/events";
@@ -37,6 +38,26 @@ export default function EventDetailScreen() {
     const url = event.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
     Linking.openURL(url).catch((err) =>
       console.error(t("alerts.openMapsError"), err)
+    );
+  };
+
+  const enquiryPhoneNumber = "9392735223";
+
+  const handleEnquiryPress = () => {
+    Alert.alert(
+      "Call Enquiry",
+      `Would you like to call this number?\n${enquiryPhoneNumber}`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Call",
+          onPress: () => {
+            Linking.openURL(`tel:${enquiryPhoneNumber}`).catch((err) =>
+              console.error("Unable to open phone dialer", err)
+            );
+          },
+        },
+      ]
     );
   };
 
@@ -76,7 +97,11 @@ export default function EventDetailScreen() {
 
       {/* Enquiry Button */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-        <TouchableOpacity style={styles.enquiryButton} activeOpacity={0.9}>
+        <TouchableOpacity
+          style={styles.enquiryButton}
+          activeOpacity={0.9}
+          onPress={handleEnquiryPress}
+        >
           <Text style={styles.enquiryButtonText}>{t("events.enquiry")}</Text>
         </TouchableOpacity>
       </View>

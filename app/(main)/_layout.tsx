@@ -35,6 +35,7 @@ export default function MainLayout() {
       <Stack.Screen name="lighting" />
       <Stack.Screen name="profile" />
       <Stack.Screen name="event/[id]" />
+      <Stack.Screen name="caretaker/[id]" />
     </Stack>
   );
 }
